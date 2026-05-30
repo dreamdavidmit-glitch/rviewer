@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ruflo superpower — AI Learning Diagnosis</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0f172a; color: #e2e8f0; min-height: 100vh;
+  display: flex; justify-content: center; align-items: center;
+}
+.container { width: 100%; max-width: 720px; padding: 20px; }
+
+/* ===== SETUP SCREEN ===== */
+.setup-card {
+  background: #1e293b; border-radius: 20px; padding: 40px;
+  border: 1px solid #334155; box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+}
+.setup-card h1 { font-size: 28px; margin-bottom: 4px; }
+.setup-card h1 span { background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.setup-card .subtitle { color: #64748b; font-size: 14px; margin-bottom: 30px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.form-group input { width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #e2e8f0; font-size: 15px; outline: none; transition: border-color 0.2s; }
+.form-group input:focus { border-color: #3b82f6; }
+.topic-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.topic-chip { padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid #334155; background: #0f172a; color: #94a3b8; transition: all 0.2s; user-select: none; }
+.topic-chip:hover { border-color: #3b82f6; color: #e2e8f0; }
+.topic-chip.selected { background: #3b82f6; border-color: #3b82f6; color: white; }
+.btn { padding: 12px 28px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; width: 100%; padding: 14px; font-size: 16px; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(59,130,246,0.3); }
+.btn-primary:disabled { opacity: 0.4; transform: none; cursor: not-allowed; box-shadow: none; }
+
+/* ===== QUIZ SCREEN ===== */
+.quiz-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; background: #1e293b; border-radius: 14px;
+  margin-bottom: 20px; border: 1px solid #334155;
+}
+.quiz-header .progress-text { font-size: 14px; color: #94a3b8; }
+.quiz-header .timer { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.timer-ok { color: #22c55e; }
+.timer-warn { color: #f59e0b; }
+.timer-over { color: #ef4444; }
+.progress-bar { height: 4px; background: #334155; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.3s ease; border-radius: 2px; }
+
+.question-card {
+  background: #1e293b; border-radius: 16px; padding: 30px;
+  border: 1px solid #334155; margin-bottom: 16px;
+}
+.question-meta { display: flex; gap: 8px; margin-bottom: 16px; }
+.tag { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.tag-topic { background: rgba(59,130,246,0.15); color: #60a5fa; }
+.tag-subtopic { background: rgba(139,92,246,0.15); color: #a78bfa; }
+.tag-diff { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.tag-time { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+.question-text { font-size: 18px; line-height: 1.6; margin-bottom: 24px; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  padding: 14px 18px; background: #0f172a; border: 2px solid #334155;
+  border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.15s;
+  display: flex; align-items: center; gap: 12px;
+}
+.option:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+.option.selected { border-color: #3b82f6; background: rgba(59,130,246,0.1); }
+.option.correct { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+.option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.1); }
+.option-letter {
+  width: 32px; height: 32px; border-radius: 50%; background: #334155;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; flex-shrink: 0;
+}
+.option.selected .option-letter { background: #3b82f6; color: white; }
+.option.correct .option-letter { background: #22c55e; color: white; }
+.option.wrong .option-letter { background: #ef4444; color: white; }
+
+.fill-input {
+  width: 100%; padding: 14px 18px; background: #0f172a; border: 2px solid #334155;
+  border-radius: 12px; color: #e2e8f0; font-size: 16px; outline: none;
+  transition: border-color 0.2s;
+}
+.fill-input:focus { border-color: #3b82f6; }
+
+.feedback {
+  padding: 14px 18px; border-radius: 10px; margin-top: 16px; font-size: 14px; display: none;
+}
+.feedback.correct-fb { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
+.feedback.wrong-fb { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #f87171; display: block; }
+
+.hint-box {
+  background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 10px; padding: 14px 18px; margin-top: 12px; display: none;
+  color: #fbbf24; font-size: 14px;
+}
+
+.btn-row { display: flex; gap: 10px; margin-top: 20px; }
+.btn-hint { background: transparent; border: 1px solid #f59e0b; color: #f59e0b; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.btn-hint:hover { background: rgba(245,158,11,0.1); }
+.btn-next { background: #3b82f6; color: white; padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; display: none; }
+.btn-next:hover { background: #2563eb; }
+
+/* ===== RESULT SCREEN ===== */
+.result-card {
+  background: #1e293b; border-radius: 20px; padding: 40px;
+  border: 1px solid #334155; text-align: center;
+}
+.result-card h1 { font-size: 32px; margin-bottom: 8px; }
+.score-circle {
+  width: 130px; height: 130px; border-radius: 50%; border: 8px solid #3b82f6;
+  display: flex; align-items: center; justify-content: center; margin: 20px auto;
+  font-size: 40px; font-weight: 700;
+}
+.score-circle.high { border-color: #22c55e; color: #22c55e; }
+.score-circle.mid { border-color: #f59e0b; color: #f59e0b; }
+.score-circle.low { border-color: #ef4444; color: #ef4444; }
+
+.topic-results { text-align: left; margin-top: 24px; }
+.topic-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; }
+.topic-row .name { font-weight: 600; }
+.topic-row .mastery { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.mastery-mastered { background: rgba(34,197,94,0.15); color: #22c55e; }
+.mastery-proficient { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.mastery-developing { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.mastery-needs_review { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+.report-link { margin-top: 24px; }
+.report-link a { color: #60a5fa; font-size: 15px; }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ============ SETUP ============ -->
+  <div id="setupScreen" class="setup-card">
+    <h1>ruflo <span>superpower</span></h1>
+    <p class="subtitle">AI-Powered Learning Diagnosis System</p>
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="studentName" placeholder="Enter your name" value="David">
+    </div>
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" id="subjectInput" value="math" readonly style="opacity:0.6">
+    </div>
+    <div class="form-group">
+      <label>Topics (click to select)</label>
+      <div class="topic-chips" id="topicChips"></div>
+    </div>
+    <div class="form-group" id="questionCountInfo" style="color:#64748b;font-size:13px;"></div>
+    <button class="btn btn-primary" id="startBtn" onclick="startQuiz()">
+      Start Diagnostic Quiz
+    </button>
+  </div>
+
+  <!-- ============ QUIZ ============ -->
+  <div id="quizScreen" class="hidden">
+    <div class="quiz-header">
+      <div class="progress-text" id="progressText">Question 1 / 24</div>
+      <div class="timer timer-ok" id="timerDisplay">0s</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="question-card" id="questionCard">
+      <div class="question-meta" id="questionMeta"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <input type="text" class="fill-input hidden" id="fillInput" placeholder="Type your answer and press Enter">
+      <div class="feedback" id="feedback"></div>
+      <div class="hint-box" id="hintBox"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-hint" id="hintBtn" onclick="showHint()">Show Hint (+30s)</button>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+      <button class="btn btn-hint" style="margin-left:auto;border-color:#ef4444;color:#ef4444;" onclick="skipQuestion()">Skip</button>
+    </div>
+  </div>
+
+  <!-- ============ RESULT ============ -->
+  <div id="resultScreen" class="result-card hidden">
+    <h1>Quiz Complete!</h1>
+    <p style="color:#94a3b8" id="resultSubtitle"></p>
+    <div class="score-circle" id="scoreCircle"></div>
+    <div class="topic-results" id="topicResults"></div>
+    <div style="margin-top:20px;text-align:left;color:#94a3b8;font-size:13px;" id="resultRecs"></div>
+    <div class="report-link" style="margin-top:16px;">
+      <a href="#" id="reportLink" target="_blank">Open Full Report in Browser</a>
+    </div>
+    <button class="btn btn-primary" style="margin-top:20px" onclick="location.reload()">Take Another Quiz</button>
+  </div>
+
+</div>
+
+<script>
+// ===== STATE =====
+let allTopics = {{ all_topics|tojson }};
+let questions = [];
+let currentIndex = 0;
+let sessionId = "";
+let quizName = "";
+let quizSubject = "";
+let quizTopics = [];
+let quizStartedAt = "";
+let answers = [];
+let timerInterval = null;
+let questionStartTime = 0;
+let currentExpectedTime = 60;
+let usedHint = false;
+let totalTime = 0;
+
+// ===== SETUP =====
+function initSetup() {
+  let chipsHtml = "";
+  let topics = allTopics["math"] || [];
+  topics.forEach(t => {
+    chipsHtml += `<div class="topic-chip selected" data-topic="${t}" onclick="toggleTopic(this)">${t}</div>`;
+  });
+  document.getElementById("topicChips").innerHTML = chipsHtml;
+  updateQuestionCount();
+}
+
+function toggleTopic(el) {
+  el.classList.toggle("selected");
+  updateQuestionCount();
+}
+
+function updateQuestionCount() {
+  let selected = getSelectedTopics();
+  let map = { algebra: 8, geometry: 8, functions: 8 };
+  let total = selected.reduce((s, t) => s + (map[t] || 0), 0);
+  document.getElementById("questionCountInfo").textContent =
+    `${total} questions from ${selected.length} topic(s)`;
+}
+
+function getSelectedTopics() {
+  return [...document.querySelectorAll(".topic-chip.selected")].map(c => c.dataset.topic);
+}
+
+async function startQuiz() {
+  quizName = document.getElementById("studentName").value.trim() || "Anonymous";
+  quizSubject = document.getElementById("subjectInput").value.trim();
+  quizTopics = getSelectedTopics();
+  if (!quizTopics.length) { alert("Select at least one topic."); return; }
+
+  document.getElementById("startBtn").disabled = true;
+  document.getElementById("startBtn").textContent = "Loading...";
+
+  let resp = await fetch("/api/start", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: quizName, subject: quizSubject, topics: quizTopics })
+  });
+  let data = await resp.json();
+  questions = data.questions;
+  sessionId = data.session_id;
+  quizStartedAt = new Date().toISOString();
+  totalTime = 0;
+  answers = [];
+
+  document.getElementById("setupScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  document.getElementById("resultScreen").classList.add("hidden");
+
+  currentIndex = 0;
+  renderQuestion();
+}
+
+// ===== QUIZ =====
+function renderQuestion() {
+  if (currentIndex >= questions.length) { return finishQuiz(); }
+
+  let q = questions[currentIndex];
+  currentExpectedTime = q.expected_seconds;
+  usedHint = false;
+
+  document.getElementById("progressText").textContent = `Question ${currentIndex + 1} / ${questions.length}`;
+  document.getElementById("progressFill").style.width = ((currentIndex) / questions.length * 100) + "%";
+  document.getElementById("feedback").className = "feedback";
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("hintBox").style.display = "none";
+  document.getElementById("hintBtn").style.display = "inline-block";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("fillInput").classList.add("hidden");
+  document.getElementById("fillInput").value = "";
+
+  document.getElementById("questionMeta").innerHTML = `
+    <span class="tag tag-topic">${q.topic}</span>
+    <span class="tag tag-subtopic">${q.subtopic}</span>
+    <span class="tag tag-diff">${q.difficulty}</span>
+    <span class="tag tag-time">~${q.expected_seconds}s</span>
+  `;
+  document.getElementById("questionText").textContent = q.question;
+
+  let optsHtml = "";
+  if (q.options && q.options.length > 0) {
+    let letters = "ABCD";
+    q.options.forEach((opt, i) => {
+      optsHtml += `
+        <div class="option" data-index="${i}" onclick="selectOption(this, ${i})">
+          <div class="option-letter">${letters[i]}</div>
+          <div style="flex:1">${opt}</div>
+        </div>`;
+    });
+    document.getElementById("optionsContainer").innerHTML = optsHtml;
+    document.getElementById("optionsContainer").style.display = "flex";
+    document.getElementById("fillInput").classList.add("hidden");
+  } else {
+    document.getElementById("optionsContainer").innerHTML = "";
+    document.getElementById("optionsContainer").style.display = "none";
+    document.getElementById("fillInput").classList.remove("hidden");
+    document.getElementById("fillInput").focus();
+  }
+
+  startTimer();
+  questionStartTime = Date.now();
+}
+
+function selectOption(el, index) {
+  if (document.getElementById("nextBtn").style.display !== "none") return;
+  document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+  el.classList.add("selected");
+  submitAnswer(el.textContent.trim().replace(/^[A-D]\s*/, ""));
+}
+
+function showHint() {
+  if (!questions[currentIndex]) return;
+  document.getElementById("hintBox").textContent = "Hint: " + questions[currentIndex].hint;
+  document.getElementById("hintBox").style.display = "block";
+  usedHint = true;
+  document.getElementById("hintBtn").style.display = "none";
+}
+
+function skipQuestion() {
+  submitAnswer("[SKIPPED]");
+}
+
+async function submitAnswer(rawAnswer) {
+  clearInterval(timerInterval);
+  let elapsed = (Date.now() - questionStartTime) / 1000;
+  let q = questions[currentIndex];
+
+  if (usedHint) elapsed += 30;
+  elapsed = Math.round(elapsed * 10) / 10;
+  totalTime += elapsed;
+
+  let resp = await fetch("/api/answer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      session_id: sessionId,
+      question_id: q.id,
+      answer: rawAnswer,
+      actual_time: elapsed,
+      expected_time: q.expected_seconds,
+      question_text: q.question,
+      topic: q.topic,
+      subtopic: q.subtopic,
+      used_hint: usedHint,
+    })
+  });
+  let data = await resp.json();
+
+  // Show feedback
+  if (data.is_correct) {
+    document.getElementById("feedback").textContent = "Correct! " + elapsed.toFixed(1) + "s";
+    document.getElementById("feedback").className = "feedback correct-fb";
+  } else {
+    document.getElementById("feedback").textContent = "Wrong. Answer: " + data.correct_answer + " (" + elapsed.toFixed(1) + "s)";
+    document.getElementById("feedback").className = "feedback wrong-fb";
+  }
+
+  // Highlight correct/wrong option
+  if (q.options && q.options.length > 0) {
+    document.querySelectorAll(".option").forEach(opt => {
+      let optText = opt.textContent.trim().replace(/^[A-D]\s*/, "");
+      if (optText === data.correct_answer) opt.classList.add("correct");
+      if (opt.classList.contains("selected") && optText !== data.correct_answer) opt.classList.add("wrong");
+    });
+  }
+
+  document.getElementById("nextBtn").style.display = "inline-block";
+  document.getElementById("hintBtn").style.display = "none";
+
+  answers.push({ q: q, elapsed: elapsed, correct: data.is_correct });
+}
+
+function nextQuestion() {
+  currentIndex++;
+  renderQuestion();
+  document.getElementById("progressFill").style.width = (currentIndex / questions.length * 100) + "%";
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  let expected = currentExpectedTime;
+  document.getElementById("timerDisplay").textContent = "0s";
+  document.getElementById("timerDisplay").className = "timer timer-ok";
+  let start = Date.now();
+
+  timerInterval = setInterval(() => {
+    let sec = Math.round((Date.now() - start) / 1000);
+    document.getElementById("timerDisplay").textContent = sec + "s";
+    let ratio = sec / expected;
+    if (ratio > 1.3) document.getElementById("timerDisplay").className = "timer timer-over";
+    else if (ratio > 0.8) document.getElementById("timerDisplay").className = "timer timer-warn";
+    else document.getElementById("timerDisplay").className = "timer timer-ok";
+  }, 200);
+}
+
+// ===== KEYBOARD =====
+document.addEventListener("keydown", (e) => {
+  if (document.getElementById("quizScreen").classList.contains("hidden")) return;
+  if (document.getElementById("nextBtn").style.display !== "none") {
+    if (e.key === "Enter") nextQuestion();
+    return;
+  }
+  if (e.key === "Enter" && !document.getElementById("fillInput").classList.contains("hidden")) {
+    let val = document.getElementById("fillInput").value.trim();
+    if (val) submitAnswer(val);
+    return;
+  }
+  let letters = "abcd";
+  let idx = letters.indexOf(e.key.toLowerCase());
+  if (idx >= 0) {
+    let opts = document.querySelectorAll(".option");
+    if (opts[idx]) selectOption(opts[idx], idx);
+  }
+});
+
+// ===== FINISH =====
+async function finishQuiz() {
+  clearInterval(timerInterval);
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.remove("hidden");
+
+  let resp = await fetch("/api/finish", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      session_id: sessionId,
+      student_name: quizName,
+      subject: quizSubject,
+      topics: quizTopics,
+      total_time: totalTime,
+      created_at: quizStartedAt,
+    })
+  });
+  let data = await resp.json();
+
+  document.getElementById("resultSubtitle").textContent =
+    `${data.score} / ${data.total} correct  |  ${(data.total_time / 60).toFixed(1)} min`;
+
+  let circle = document.getElementById("scoreCircle");
+  circle.textContent = data.accuracy.toFixed(0) + "%";
+  circle.className = "score-circle " + (data.accuracy >= 80 ? "high" : data.accuracy >= 50 ? "mid" : "low");
+
+  let topicHtml = "";
+  (data.analyses || []).forEach(t => {
+    topicHtml += `
+      <div class="topic-row">
+        <span class="name">${t.topic}</span>
+        <span style="color:#94a3b8">${t.accuracy.toFixed(0)}% | ${t.speed_ratio.toFixed(1)}x speed</span>
+        <span class="mastery mastery-${t.mastery}">${t.mastery.replace("_"," ")}</span>
+      </div>`;
+  });
+  document.getElementById("topicResults").innerHTML = topicHtml;
+
+  let recHtml = "<strong>Recommendations:</strong><br>";
+  (data.recommendations || []).forEach(r => { recHtml += "- " + r + "<br>"; });
+  document.getElementById("resultRecs").innerHTML = recHtml;
+
+  document.getElementById("reportLink").href = data.report_url;
+}
+
+// ===== INIT =====
+initSetup();
+</script>
+</body>
+</html>

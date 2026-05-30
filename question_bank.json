@@ -1,0 +1,112 @@
+{
+  "subjects": {
+    "math": {
+      "Algebra": [
+        {
+          "id": "math-algebra-001",
+          "topic": "Algebra",
+          "subtopic": "Linear Equations",
+          "type": "multiple_choice",
+          "question": "Solve for x: 2x + 5 = 17",
+          "options": ["x = 4", "x = 5", "x = 6", "x = 7"],
+          "answer": "x = 6",
+          "expected_seconds": 45,
+          "difficulty": "easy",
+          "hint": "Subtract 5 from both sides, then divide by 2."
+        },
+        {
+          "id": "math-algebra-002",
+          "topic": "Algebra",
+          "subtopic": "Quadratic Equations",
+          "type": "multiple_choice",
+          "question": "Solve x^2 - 5x + 6 = 0 by factoring.",
+          "options": ["x = 1, x = 6", "x = 2, x = 3", "x = -2, x = -3", "x = -1, x = -6"],
+          "answer": "x = 2, x = 3",
+          "expected_seconds": 60,
+          "difficulty": "easy",
+          "hint": "Find two numbers that multiply to 6 and add to -5."
+        }
+      ],
+      "Geometry": [
+        {
+          "id": "math-geometry-001",
+          "topic": "Geometry",
+          "subtopic": "Triangle Area",
+          "type": "multiple_choice",
+          "question": "A triangle has base 10 cm and height 6 cm. What is its area?",
+          "options": ["30 cm^2", "60 cm^2", "16 cm^2", "32 cm^2"],
+          "answer": "30 cm^2",
+          "expected_seconds": 30,
+          "difficulty": "easy",
+          "hint": "Area = 1/2 x base x height = 1/2 x 10 x 6"
+        },
+        {
+          "id": "math-geometry-002",
+          "topic": "Geometry",
+          "subtopic": "Pythagorean Theorem",
+          "type": "fill_blank",
+          "question": "A right triangle has legs of 6 cm and 8 cm. The hypotenuse is ___ cm.",
+          "options": [],
+          "answer": "10",
+          "expected_seconds": 45,
+          "difficulty": "easy",
+          "hint": "hypotenuse^2 = 6^2 + 8^2 = 36 + 64 = 100"
+        }
+      ],
+      "Functions": [
+        {
+          "id": "math-functions-001",
+          "topic": "Functions",
+          "subtopic": "Function Evaluation",
+          "type": "multiple_choice",
+          "question": "If f(x) = 2x + 3, what is f(4)?",
+          "options": ["8", "10", "11", "7"],
+          "answer": "11",
+          "expected_seconds": 30,
+          "difficulty": "easy",
+          "hint": "f(4) = 2(4) + 3 = 8 + 3 = 11"
+        },
+        {
+          "id": "math-functions-002",
+          "topic": "Functions",
+          "subtopic": "Quadratic Functions",
+          "type": "fill_blank",
+          "question": "For y = (x - 2)^2 + 3, the y-coordinate of the vertex is ___.",
+          "options": [],
+          "answer": "3",
+          "expected_seconds": 30,
+          "difficulty": "easy",
+          "hint": "In vertex form y = a(x - h)^2 + k, the vertex is (h, k) = (2, 3)."
+        }
+      ]
+    },
+    "english": {
+      "Vocabulary": [
+        {
+          "id": "english-vocab-001",
+          "topic": "Vocabulary",
+          "subtopic": "Synonyms",
+          "type": "multiple_choice",
+          "question": "Choose the synonym for 'benevolent':",
+          "options": ["Generous", "Hostile", "Lazy", "Greedy"],
+          "answer": "Generous",
+          "expected_seconds": 30,
+          "difficulty": "easy",
+          "hint": "'Benevolent' comes from Latin 'bene' (good) + 'volent' (wishing)."
+        },
+        {
+          "id": "english-vocab-002",
+          "topic": "Vocabulary",
+          "subtopic": "Context Clues",
+          "type": "fill_blank",
+          "question": "The scientist's findings were ____; they completely changed how we understand the disease. (Fill in: revolutionary / minor / irrelevant)",
+          "options": [],
+          "answer": "revolutionary",
+          "expected_seconds": 45,
+          "difficulty": "medium",
+          "hint": "The clue is 'completely changed how we understand' — it must be significant."
+        }
+      ]
+    }
+  }
+}

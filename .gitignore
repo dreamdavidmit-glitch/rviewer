@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Database
+data/quiz_data.db*
+
+# Reports (user-generated)
+reports/*.html
+
+# Server logs
+server.log
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/
+.env
