@@ -1,107 +1,191 @@
-# rviewer — AI-Powered Learning Diagnosis
+# rviewer — AI Learning Diagnosis Claude Skill
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/)
+<p align="center">
+  <img src="https://img.shields.io/badge/Claude_Skill-Installed-8b5cf6?logo=anthropic" alt="Claude Skill">
+  <img src="https://img.shields.io/badge/Claude_Code-Compatible-3b82f6?logo=claude" alt="Claude Code">
+  <img src="https://img.shields.io/badge/MCP_Ready-22c55e" alt="MCP Ready">
+  <img src="https://img.shields.io/badge/Python-3.6+-blue?logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <a href="https://github.com/dreamdavidmit-glitch/rviewer/stargazers"><img src="https://img.shields.io/github/stars/dreamdavidmit-glitch/rviewer?style=social" alt="Stars"></a>
+</p>
 
-> Give it a textbook. It gives you a diagnostic quiz. Track timing. Find weak points. Get a report.
+<p align="center">
+  <b>Drop in a textbook. Get a diagnostic quiz. Find your weak points. Fix them.</b>
+</p>
 
-rviewer is a **Claude Code skill** + **web quiz engine** that turns any study material into an interactive diagnostic test with multi-dimensional weak-point analysis.
+> **rviewer** is an open-source Claude Code skill that turns ANY study material into an interactive diagnostic quiz with real-time timing, multi-dimensional weak-point analysis, and a visual mastery report — all in your browser.
 
-## How It Works
+---
+
+## Why rviewer?
+
+Most AI quiz tools give you generic questions. **rviewer reads YOUR material** — your textbook chapter, your class notes, your PDF — and generates questions tailored to exactly what you're studying. Then it tracks how fast you answer, spots patterns in your mistakes, and tells you what to review.
+
+| | Traditional Quiz Apps | rviewer |
+|---|---|---|
+| Question source | Pre-built generic bank | **Generated from YOUR material** |
+| Timing analysis | None | **Per-question real-time tracking** |
+| Weak point detection | Correct/wrong only | **4D: accuracy + speed + streaks + subtopics** |
+| Delivery | App download | **Browser + Claude Code skill** |
+| Subjects | Fixed | **Anything you teach it** |
+
+## Quick Demo
 
 ```
-You: "Quiz me on Chapter 5" + PDF/notes
-  → Claude reads the material
-  → Generates questions tailored to the content
-  → Launches interactive web quiz
-  → You answer with real-time timing
-  → Report: accuracy, speed, streaks, weak points, mastery level
+You: "/rviewer — quiz me on Math 10 Unit 5"
+Claude: reads your Obsidian notes → generates 20 Quadratic Functions questions
+You: open http://127.0.0.1:5050 → take the quiz → instant mastery report
 ```
 
 ## Features
 
-- **Material → Questions** — Paste any textbook, notes, or PDF. Claude generates questions on the spot. No pre-built question bank needed.
-- **Interactive Web Quiz** — Browser-based quiz with real-time per-question timer (green/yellow/red), progress bar, keyboard shortcuts (A/B/C/D), hint system, skip option
-- **4-Dimensional Analysis** per topic:
-  1. **Accuracy** — correct vs total
-  2. **Speed** — actual time vs expected time ratio
-  3. **Streaks** — consecutive correct/incorrect pattern detection
-  4. **Subtopics** — pinpoint exactly which concepts are weak
-- **Mastery Levels** — Mastered / Proficient / Developing / Needs Review
-- **HTML Report** — Visual report with topic cards, progress bars, answer timeline, personalized recommendations
-- **Persistent History** — SQLite database stores all sessions for tracking improvement over time
-- **Multi-Subject** — Math, English, Physics, or anything you teach it
+### Claude Code Skill
+- **/rviewer** command — invoke from any Claude Code session
+- Reads material from PDF, screenshots, Obsidian vault, or pasted text
+- Claude generates fresh questions every time — no stale question banks
+- Server-side answer key — student never sees correct answers
 
-## Quick Start
+### Interactive Web Quiz
+- Real-time per-question timer: green → yellow → red as time runs out
+- Keyboard shortcuts (A/B/C/D for multiple choice, Enter for fill-in)
+- Hint system with time penalty (+30s)
+- Skip option — marked wrong but records 0s time
+- Progress bar + immediate correct/wrong feedback
 
-### Install the Skill
+### 4-Dimensional Analysis Per Topic
+
+| Dimension | What It Measures | Weight |
+|-----------|-----------------|--------|
+| **Accuracy** | Correct / Total | 40% |
+| **Speed** | Actual time vs Expected time ratio | 30% |
+| **Streaks** | Longest consecutive correct answers | 30% |
+| **Subtopics** | Pinpoint exactly which concepts are weak | — |
+
+### Mastery Levels
+- **Mastered** (85+) → Move on to harder material
+- **Proficient** (65-84) → Minor gaps, targeted practice
+- **Developing** (40-64) → Needs focused review
+- **Needs Review** (<40) → Urgent: revisit fundamentals
+
+### HTML Diagnostic Report
+- Topic cards with color-coded mastery badges
+- Progress bars for each topic
+- Complete answer timeline (what you answered vs correct answer vs time taken)
+- Personalized study recommendations
+- One-click open in browser
+
+### Persistent History
+- SQLite database stores every session
+- Track improvement over days/weeks
+- `python app.py stats` — see your average accuracy and total study time
+
+---
+
+## Install
+
+### Option 1: Claude Code Skill (Recommended)
 
 ```bash
-# Clone into Claude Code skills directory
-git clone https://github.com/dreamdavidmit/rviewer.git ~/.claude/skills/rviewer
+# Clone into your Claude Code skills directory
+git clone https://github.com/dreamdavidmit-glitch/rviewer.git ~/.claude/skills/rviewer
 ```
 
-### Install Dependencies
+Then restart Claude Code — `/rviewer` will be available.
+
+### Option 2: Standalone Web App
 
 ```bash
+git clone https://github.com/dreamdavidmit-glitch/rviewer.git
+cd rviewer
 pip install flask
+python web_app.py
+# Open http://127.0.0.1:5050
 ```
 
-### Run
+### Option 3: CLI Only (No Browser)
 
 ```bash
-# Start the web server
-cd ~/.claude/skills/rviewer
-python web_app.py
+python app.py quiz      # Terminal-based quiz
+python app.py history   # View past sessions
+python app.py report    # Reopen previous reports
+python app.py stats     # Your statistics
 ```
 
-Then open **http://127.0.0.1:5050** in your browser.
+---
 
-### Use with Claude Code
+## Tech Stack
 
-Just type `/rviewer` in Claude Code, then provide your study material. Claude reads it, generates questions, writes them to the quiz engine, and tells you when to start.
+| Layer | Choice |
+|-------|--------|
+| AI / Skill | Claude Code (Anthropic) |
+| Backend | Python 3.6+ · Flask |
+| Frontend | Vanilla HTML/CSS/JS — zero npm dependencies |
+| Database | SQLite + WAL mode |
+| Reports | Static HTML with CSS (no JS framework) |
+
+**Zero frontend build step. Zero npm install. Just Python + a browser.**
+
+---
 
 ## Project Structure
 
 ```
 rviewer/
-├── web_app.py              # Flask web server (quiz UI + API)
-├── quiz_engine.py          # Quiz logic, timing, session management
-├── analyzer.py             # Multi-dimensional weak-point analysis
-├── report_generator.py     # HTML visualization report
-├── database.py             # SQLite persistence layer
-├── models.py               # Data models (dataclasses)
+├── SKILL.md                # Claude Code skill definition
+├── web_app.py              # Flask server (quiz API + report serving)
+├── quiz_engine.py          # Quiz logic, real-time timing, session mgmt
+├── analyzer.py             # 4D weak-point analysis engine
+├── report_generator.py     # HTML visualization report generator
+├── database.py             # SQLite persistence with WAL
+├── models.py               # Python dataclasses + enums
 ├── question_bank.json      # Dynamic question bank (Claude writes here)
 ├── templates/
-│   └── quiz.html           # Web quiz UI (React-free, vanilla JS)
-├── data/                   # SQLite DB (auto-created)
-├── reports/                # Generated HTML reports
-└── SKILL.md                # Claude Code skill definition
+│   └── quiz.html           # Interactive quiz UI
+├── app.py                  # CLI entry point (quiz/history/report/stats)
+├── data/                   # SQLite DB (auto-created at runtime)
+└── reports/                # Generated HTML diagnostic reports
 ```
 
-## Tech Stack
+---
 
-| Layer | Tech |
-|-------|------|
-| Backend | Python 3.6+ · Flask · SQLite |
-| Frontend | Vanilla HTML/CSS/JS (zero dependencies) |
-| AI | Claude Code skill — generates questions from any material |
-| Reports | Static HTML with CSS styling |
+## How It Works (Architecture)
 
-## CLI Commands
-
-The project also works as a standalone CLI:
-
-```bash
-python app.py quiz      # Terminal-based quiz
-python app.py history   # View past sessions
-python app.py report    # View previous reports
-python app.py stats     # Student statistics
+```
+┌─────────────────────────────────────────────────────────┐
+│  Claude Code (AI)                                       │
+│  Reads your material → Generates questions → JSON       │
+└──────────────────────┬──────────────────────────────────┘
+                       │ writes to
+                       ▼
+┌─────────────────────────────────────────────────────────┐
+│  question_bank.json                                     │
+│  Dynamic — rebuilt every time you quiz a new topic      │
+└──────────────────────┬──────────────────────────────────┘
+                       │ loaded by
+                       ▼
+┌─────────────────────────────────────────────────────────┐
+│  Flask Web Server (web_app.py)                          │
+│  /api/start  → new session + questions                  │
+│  /api/answer → check answer (server-side key)           │
+│  /api/finish → analysis + report                        │
+└──────────────────────┬──────────────────────────────────┘
+                       │ serves
+                       ▼
+┌─────────────────────────────────────────────────────────┐
+│  Browser Quiz UI (quiz.html)                            │
+│  Real-time timer · Keyboard shortcuts · Live feedback   │
+└─────────────────────────────────────────────────────────┘
 ```
 
-## Adding New Subjects
+---
 
-Add entries to `question_bank.json`:
+## Adding Your Own Subjects
+
+Edit `question_bank.json` — or just tell Claude:
+
+> "Add a physics question bank for Newtonian Mechanics"
+
+Claude writes the JSON for you. Example structure:
 
 ```json
 {
@@ -113,12 +197,12 @@ Add entries to `question_bank.json`:
           "topic": "Mechanics",
           "subtopic": "Newton's Laws",
           "type": "multiple_choice",
-          "question": "An object at rest stays at rest unless...",
-          "options": ["Newton's 1st Law", "Newton's 2nd Law", "Newton's 3rd Law", "Hooke's Law"],
-          "answer": "Newton's 1st Law",
+          "question": "An object at rest stays at rest unless acted upon by...",
+          "options": ["An unbalanced force", "Gravity only", "Friction only", "Its own weight"],
+          "answer": "An unbalanced force",
           "expected_seconds": 30,
           "difficulty": "easy",
-          "hint": "Think about inertia."
+          "hint": "This is Newton's First Law — the law of inertia."
         }
       ]
     }
@@ -126,7 +210,19 @@ Add entries to `question_bank.json`:
 }
 ```
 
-Or just tell Claude: "Add a physics question bank for mechanics" — and it writes it for you.
+---
+
+## Keywords
+
+`claude-skill` `claude-code` `claude-code-skill` `mcp` `mcp-server` `ai-agent` `ai-learning` `ai-education` `edtech` `anthropic` `claude` `diagnostic-quiz` `learning-analytics` `self-study` `quiz-generator` `weak-point-analysis` `study-tool` `ai-tutor` `open-source` `python` `flask`
+
+---
+
+## Star History
+
+If this project helped you study, consider giving it a ⭐ — it helps other students find it too.
+
+---
 
 ## License
 
@@ -134,4 +230,6 @@ MIT — see [LICENSE](LICENSE)
 
 ## Author
 
-dreamdavidmit — built for students who want to know exactly what they don't know.
+**dreamdavidmit** — student, builder, Claude Code enthusiast.
+
+*"Built this because I was tired of guessing what I didn't know."*
